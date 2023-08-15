@@ -1,0 +1,7 @@
+#carousel{
+    max-height:500px
+}
+
+.carousel-image{
+    transform: translate(-0%, -36%);
+}

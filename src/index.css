@@ -1,0 +1,10 @@
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@10..48,200;10..48,400&family=Caprasimo&family=Open+Sans&family=Poppins&family=Roboto&family=Tilt+Neon&display=swap");
+
+body {
+  /* margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh; */
+  font-family: 'Tilt Neon', cursive
+}
