@@ -31,7 +31,9 @@ const Login = () => {
       alert("Enter valid credentials, Try Again!!");
     }
     if(json.success){
-      navigate("/")
+      localStorage.setItem("authToken", json.authToken);
+      console.log(localStorage.getItem("authToken"));
+      navigate("/");
     }
   };
   const onChange = (event) => {

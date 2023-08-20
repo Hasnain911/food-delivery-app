@@ -1,9 +1,11 @@
 const express = require("express");
 const { body, validationResult } = require("express-validator");
-
 const router = express.Router();
 const User = require("../models/Users");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
+const secretKey = "secretKey";
 router.post(
   "/newuser",
   body("email", "Invalid Email").isEmail(),
@@ -18,11 +20,13 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
+    const salt = await bcrypt.genSalt(5);
+    let securePassword = await bcrypt.hash(req.body.password, salt);
     try {
       await User.create({
         name: req.body.name,
         email: req.body.email,
-        password: req.body.password,
+        password: securePassword,
         location: req.body.location,
       });
       res.json({ success: true });
@@ -46,18 +50,28 @@ router.post(
     }
     let email = req.body.email;
     try {
-      let user = await User.findOne({ email });
-      if (!user) {
+      let userData = await User.findOne({ email });
+      if (!userData) {
         return res
           .status(400)
           .json({ errors: "Try logging with valid email address" });
       }
-      if (req.body.password !== user.password) {
+      const passwordComparison = await bcrypt.compare(
+        req.body.password,
+        userData.password
+      );
+      if (!passwordComparison) {
         return res
           .status(400)
           .json({ errors: "You typed an incorrect password" });
       }
-     return res.json({ success: true });
+      const data = {
+        user: {
+          id: userData.id,
+        },
+      };
+      const authToken = jwt.sign(data, secretKey);
+      return res.json({ success: true, authToken: authToken });
     } catch (error) {
       console.log(error);
       res.json({ success: false });
